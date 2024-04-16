@@ -1,6 +1,7 @@
 import { resolve } from 'node:path';
 import { URL, fileURLToPath } from 'node:url';
 
+import { readdirSync } from 'node:fs';
 import VueI18n from '@intlify/unplugin-vue-i18n/vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
@@ -15,8 +16,11 @@ import { VitePWA } from 'vite-plugin-pwa';
 import markdown from 'vite-plugin-vue-markdown';
 import svgLoader from 'vite-svg-loader';
 import { configDefaults } from 'vitest/config';
+import Sitemap from 'vite-plugin-sitemap';
 
-const baseUrl = process.env.BASE_URL ?? '/it-tools';
+const dir = resolve(__dirname, 'src/tools');
+const basePath = process.env.BASE_URL ?? '/it-tools';
+const dynamicRoutes = readdirSync(dir);
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -61,7 +65,7 @@ export default defineConfig({
         description: 'Aggregated set of useful tools for developers.',
         display: 'standalone',
         lang: 'fr-FR',
-        start_url: `${baseUrl}?utm_source=pwa&utm_medium=pwa`,
+        start_url: `${basePath}?utm_source=pwa&utm_medium=pwa`,
         orientation: 'any',
         theme_color: '#18a058',
         background_color: '#f1f5f9',
@@ -97,8 +101,9 @@ export default defineConfig({
       resolvers: [NaiveUiResolver(), IconsResolver({ prefix: 'icon' })],
     }),
     Unocss(),
+    Sitemap({ dynamicRoutes, basePath, priority: 0, changefreq: '', hostname: 'https://www.xiehai.zone/', generateRobotsTxt: false }),
   ],
-  base: baseUrl,
+  base: basePath,
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
