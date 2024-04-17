@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { URL, fileURLToPath } from 'node:url';
 
-import { readdirSync } from 'node:fs';
+import { readdirSync, statSync } from 'node:fs';
 import VueI18n from '@intlify/unplugin-vue-i18n/vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
@@ -20,7 +20,7 @@ import Sitemap from 'vite-plugin-sitemap';
 
 const dir = resolve(__dirname, 'src/tools');
 const basePath = process.env.BASE_URL ?? '/it-tools';
-const dynamicRoutes = readdirSync(dir);
+const dynamicRoutes = readdirSync(dir).filter(it => statSync(resolve(dir, it)).isDirectory());
 
 // https://vitejs.dev/config/
 export default defineConfig({
